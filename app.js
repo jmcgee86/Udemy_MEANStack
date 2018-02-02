@@ -4,7 +4,13 @@ var path = require ('path');
 
 app.set('port', process.env.PORT);
 
+app.use(function(req, res, next){
+    console.log(req.method, req.url);
+    next();
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
+
 
 app.get('/json', function(req, res){
     console.log("GET the json");
