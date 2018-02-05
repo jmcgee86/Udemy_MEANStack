@@ -1,5 +1,5 @@
 var mongoose = require ('mongoose');
-var dburl = 'mongodb://' + process.env.IP + ':' + '27017/meanhotel'
+var dburl = 'mongodb://' + process.env.IP + ':' + '27017/meanhotel';
 
 mongoose.connect(dburl);
 
@@ -35,3 +35,7 @@ process.once('SIGUSR2', function(){
         process.kill(process.pid, 'SIGUSR2');
     });
 });
+
+//Bring in Schemas and Models
+
+require('./hotels.model.js');
