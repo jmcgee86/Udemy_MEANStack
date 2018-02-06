@@ -1,29 +1,60 @@
 var mongoose = require ('mongoose');
 var Hotel = mongoose.model('Hotel');
 
+var runGeoQuery = function(req,res){
+  
+    var lng = parseFloat(req.query.lng);
+    var lat = parseFloat(req.query.lat);
+    
+    //A geoJSON point
+    var point = {
+        type: "Point",
+        coordinates: [lng, lat]
+    };
+    
+    var geoOptions = {
+      spherical: true,
+      maxDistance: 2000,//sets max distance of search in meters
+      num: 5 // max number of records returned
+    };
+    
+    Hotel
+        .geoNear(point, geoOptions, function(err, results, stats){
+            console.log('Geo results',results);
+            console.log('Geo stats', stats);
+            res
+                .status(200)
+                .json(results);
+
+        });
+};
+
 module.exports.hotelsGetAll = function (req, res){
     
-
-
-  var offset = 0;
-  var count = 5;
+    var offset = 0;
+    var count = 5;
+    
+    if (req.query && req.query.lat && req.query.lng){
+        runGeoQuery(req, res);
+        return;
+    }
   
-  if (req.query && req.query.offset){
+    if (req.query && req.query.offset){
       offset = parseInt(req.query.offset, 10);
-  };
+    };
   
-  if (req.query && req.query.count){
+    if (req.query && req.query.count){
       count = parseInt(req.query.count, 10);
-  };
+    };
 
-Hotel
-    .find()
-    .skip(offset)
-    .limit(count)
-    .exec(function(err, hotels){
-        console.log("Found hotels", hotels.length);
-        res
-            .json(hotels);
+    Hotel
+        .find()
+        .skip(offset)
+        .limit(count)
+        .exec(function(err, hotels){
+            console.log("Found hotels", hotels.length);
+            res
+                .json(hotels);
     })
 
 };
