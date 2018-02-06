@@ -6,6 +6,15 @@ var runGeoQuery = function(req,res){
     var lng = parseFloat(req.query.lng);
     var lat = parseFloat(req.query.lat);
     
+        if (isNaN(lng) || isNaN(lat)){
+        res
+            .status(400)
+            .json({
+                "message" : "If supplied in querystring longitude and latitude should be numbers"
+            });
+        return;
+    };
+    
     //A geoJSON point
     var point = {
         type: "Point",
@@ -20,12 +29,24 @@ var runGeoQuery = function(req,res){
     
     Hotel
         .geoNear(point, geoOptions, function(err, results, stats){
+            if (err){
+                console.log("error finding hotels")
+                res
+                    .status(500)
+                    .json(err);
+            }else if (results.length === 0){
+                res
+                    .status(404)
+                    .json({
+                        "message": "No Hotels Found in this Location"
+                    });
+        }else{
             console.log('Geo results',results);
             console.log('Geo stats', stats);
             res
                 .status(200)
                 .json(results);
-
+            }
         });
 };
 
@@ -34,8 +55,6 @@ module.exports.hotelsGetAll = function (req, res){
     var offset = 0;
     var count = 5;
     var maxCount = 10;
-    
-    
     
     if (req.query && req.query.lat && req.query.lng){
         runGeoQuery(req, res);
@@ -140,5 +159,4 @@ module.exports.hotelsAddOne = function (req, res){
             .status(400)
             .json({message: "Required data missing from the body"});
     }
-
 };
