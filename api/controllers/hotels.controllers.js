@@ -18,36 +18,23 @@ module.exports.hotelsGetAll = function (req, res){
 
 Hotel
     .find()
+    .skip(offset)
+    .limit(count)
     .exec(function(err, hotels){
         console.log("Found hotels", hotels.length);
         res
             .json(hotels);
     })
 
-    // collection
-    //     .find()
-    //     .skip(offset)
-    //     .limit(count)
-    //     .toArray(function(err, docs){
-    //         console.log("Found Hotels", docs);
-    //         res
-    //         .status(200)
-    //         .json(docs);
-    //     });
 };
 
 module.exports.hotelsGetOne = function (req, res){
-    
-    var db = dbconn.get();
-    var collection = db.collection('hotels');
-    
     var hotelId = req.params.hotelId;
     console.log("GET hotelId", hotelId);
     
-    collection
-        .findOne({
-            _id: ObjectId(hotelId)
-        }, function(err, doc){
+    Hotel
+    .findById(hotelId)
+    .exec(function(err, doc){
             res
                 .status(200)
                 .json(doc);
