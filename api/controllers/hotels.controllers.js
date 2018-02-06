@@ -94,22 +94,23 @@ module.exports.hotelsGetOne = function (req, res){
     Hotel
     .findById(hotelId)
     .exec(function(err, doc){
+        var response = {
+            status: 200,
+            message: doc
+        };
         if (err){
                 console.log("Error finding hotel");
-                res
-                    .status(500)
-                    .json(err);
+                response.status=500;
+                response.message = err;
             }else if(!doc){
-                res
-                    .status(404)
-                    .json({
+                response.status=404;
+                response.message={
                         "message": "Hotel ID not found"
-                    });
-            }else{
+                    };
+            }
             res
-                .status(200)
-                .json(doc);
-            }    
+                .status(response.status)
+                .json(response.message);
         });
     
 };
