@@ -52,9 +52,9 @@ var runGeoQuery = function(req,res){
 
 module.exports.hotelsGetAll = function (req, res){
     
-    var offset = 0;
-    var count = 5;
-    var maxCount = 10;
+    var offset = 10;
+    var count = 20;
+    var maxCount = 20;
     
     if (req.query && req.query.lat && req.query.lng){
         runGeoQuery(req, res);
@@ -232,4 +232,23 @@ module.exports.hotelsUpdateOne = function (req, res){
                     
                 }
             });
+};
+
+module.exports.hotelsDeleteOne = function (req, res){
+    var hotelId = req.params.hotelId;
+    
+    Hotel
+        .findByIdAndRemove(hotelId)
+        .exec(function(err, hotel){
+            if(err){
+                res
+                    .status(404)
+                    .json(err)
+            }else{
+                console.log("Hotel deleted, id: ", hotelId);
+                res
+                    .status(204)
+                    .json();
+            }
+        });
 };

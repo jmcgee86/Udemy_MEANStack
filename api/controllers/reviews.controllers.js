@@ -179,6 +179,60 @@ module.exports.reviewsUpdateOne = function (req, res){
                 };
              
         });
-  
-        
+};
+
+module.exports.reviewsDeleteOne = function (req, res){
+    var hotelId = req.params.hotelId;
+    console.log("GET hotelId", hotelId);
+    var reviewId = req.params.reviewId;
+    console.log("GET reviewId " + reviewId + "for hotelId " + hotelId);
+    
+    Hotel
+        .findById(hotelId)
+        .select('reviews')//only returns reviews instead of all the hotel data
+        .exec(function(err, hotel){
+            var response = {
+                status: 200,
+                message: {}
+            };
+            if (err){
+                console.log("error finding hotel")
+                response.status = 500;
+                response.message = err;
+            }else if(!hotel){
+                console.log("hotel id not found in database", hotelId)
+                response.status = 404;
+                response.message = {
+                        "message": "hotel id of " + hotelId +  "notfound"
+                    };
+            }else{
+            response.message = hotel.reviews.id(reviewId);
+            if (!response.message){
+                response.status = 404;
+                response.message ={
+                        "message": "review ID of " + reviewId + " not found"
+                    };
+                }
+            }if(response.status != 200){
+                    res
+                        .status(response.status)
+                        .json(response.message);
+                }else{
+                hotel.reviews.id(reviewId).remove();
+                 hotel.save(function(err, reviewUpdated){
+                    if(err){
+                        res
+                            .status(500)
+                            .json(err);
+                    }else{
+                        console.log('tried to update', reviewUpdated);
+                        res
+                            .status(204)
+                            .json(reviewUpdated);
+                    }
+                });
+                };
+             
+        });
+    
 };
