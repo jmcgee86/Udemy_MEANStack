@@ -162,7 +162,7 @@ module.exports.reviewsUpdateOne = function (req, res){
                     console.log("trying to add the updated data");
                     response.message.name = req.body.name;
                     response.message.rating = parseInt(req.body.rating,10);
-                    response.review = req.body.review;
+                    response.message.review = req.body.review;
                 
                  hotel.save(function(err, reviewUpdated){
                     if(err){
