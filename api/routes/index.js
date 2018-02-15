@@ -10,7 +10,7 @@ router
     .route('/hotels')
     .get(ctrlHotels.hotelsGetAll)
     .post(ctrlHotels.hotelsAddOne);
-//ctrlUsers.authenticate
+
 router
     .route('/hotels/:hotelId')
     .get(ctrlHotels.hotelsGetOne)

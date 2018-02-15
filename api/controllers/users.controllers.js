@@ -61,7 +61,7 @@ module.exports.login = function (req,res){
 };
 
 module.exports.authenticate = function (req,res,next){
-    var headerExists = req.headers.authorization
+    var headerExists = req.headers.authorization;
     if (headerExists){
         var token = req.headers.authorization.split(' ')[1];
         jwt.verify(token, 's3cr3t', function (error, decoded){
